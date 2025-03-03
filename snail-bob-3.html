@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snail Bob 3 - Mini Jeux</title>
+    <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animation d'arrière-plan */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #fff;
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(calc(random() * 100vw), 100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translate(calc(random() * 100vw + 50px), -100px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 1rem auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: relative;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-button, .fullscreen-button {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-button::before, .fullscreen-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            transform: scale(0);
+            transition: transform 0.5s ease;
+        }
+
+        .back-button:hover::before, .fullscreen-button:hover::before {
+            transform: scale(1);
+        }
+
+        .back-button:hover, .fullscreen-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-frame-container {
+            position: relative;
+            width: 100%;
+            flex: 1;
+            min-height: 400px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .game-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .game-frame.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1000;
+        }
+
+        .game-title {
+            font-size: 2rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-controls {
+            margin-top: 1rem;
+            text-align: center;
+            color: #ccc;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .control-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .control-section:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .control-section h3 {
+            color: #fff;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .control-list {
+            list-style: none;
+            text-align: left;
+        }
+
+        .control-list li {
+            margin: 0.8rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .control-list li i {
+            width: 20px;
+            text-align: center;
+            color: #4ecdc4;
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 0.5rem;
+            }
+
+            .game-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header-left {
+                flex-direction: column;
+            }
+
+            .game-title {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+
+            .back-button, .fullscreen-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-animation" id="particles"></div>
+    <div class="game-container">
+        <div class="game-header">
+            <div class="header-left">
+                <a href="index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour au Menu
+                </a>
+                <button class="fullscreen-button" onclick="toggleFullscreen()">
+                    <i class="fas fa-expand"></i>
+                    Plein écran
+                </button>
+            </div>
+            <h1 class="game-title">Snail Bob 3</h1>
+        </div>
+        <div class="game-frame-container">
+            <embed 
+                id="gameFrame"
+                class="game-frame"
+                src="games/snailbob3.swf"
+                type="application/x-shockwave-flash"
+                pluginspage="https://get.adobe.com/flashplayer/"
+            >
+        </div>
+        <div class="game-controls">
+            <div class="control-section">
+                <h3><i class="fas fa-desktop"></i> Contrôles PC</h3>
+                <ul class="control-list">
+                    <li><i class="fas fa-mouse-pointer"></i> Cliquez sur les objets pour interagir</li>
+                    <li><i class="fas fa-play"></i> Espace pour démarrer/arrêter Bob</li>
+                    <li><i class="fas fa-arrows-alt"></i> Flèches pour contrôler certains mécanismes</li>
+                    <li><i class="fas fa-redo"></i> R pour recommencer le niveau</li>
+                </ul>
+            </div>
+            <div class="control-section">
+                <h3><i class="fas fa-mobile-alt"></i> Mode Tactile</h3>
+                <ul class="control-list">
+                    <li><i class="fas fa-info-circle"></i> Ce jeu est optimisé pour le tactile</li>
+                    <li><i class="fas fa-hand-pointer"></i> Utilisez les boutons à l'écran</li>
+                    <li><i class="fas fa-arrows-alt"></i> Contrôles adaptés automatiquement</li>
+                    <li><i class="fas fa-gamepad"></i> Interface tactile intuitive</li>
+                    <li><i class="fas fa-mobile"></i> Rotation de l'écran supportée</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Création des particules d'arrière-plan avec positions aléatoires
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 30;
+
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            // Position initiale aléatoire
+            const startX = Math.random() * window.innerWidth;
+            const startY = Math.random() * window.innerHeight;
+            
+            // Position finale aléatoire
+            const endX = Math.random() * window.innerWidth;
+            
+            particle.style.left = `${startX}px`;
+            particle.style.top = `${startY}px`;
+            particle.style.transform = `translate(${endX - startX}px, -${window.innerHeight + 100}px)`;
+            particle.style.animationDelay = `${Math.random() * 15}s`;
+            particle.style.opacity = Math.random() * 0.5 + 0.2;
+            
+            particlesContainer.appendChild(particle);
+            
+            // Supprimer la particule après l'animation
+            particle.addEventListener('animationend', () => {
+                particle.remove();
+                createParticle();
+            });
+        }
+
+        // Création initiale des particules
+        for (let i = 0; i < particleCount; i++) {
+            createParticle();
+        }
+
+        // Gestion du mode plein écran pour le jeu
+        function toggleFullscreen() {
+            const gameFrame = document.getElementById('gameFrame');
+            if (!document.fullscreenElement) {
+                if (gameFrame.requestFullscreen) {
+                    gameFrame.requestFullscreen();
+                } else if (gameFrame.mozRequestFullScreen) {
+                    gameFrame.mozRequestFullScreen();
+                } else if (gameFrame.webkitRequestFullscreen) {
+                    gameFrame.webkitRequestFullscreen();
+                } else if (gameFrame.msRequestFullscreen) {
+                    gameFrame.msRequestFullscreen();
+                }
+                gameFrame.classList.add('fullscreen');
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                gameFrame.classList.remove('fullscreen');
+            }
+        }
+
+        // Gestion des événements de changement de mode plein écran
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+        function handleFullscreenChange() {
+            const gameFrame = document.getElementById('gameFrame');
+            if (!document.fullscreenElement) {
+                gameFrame.classList.remove('fullscreen');
+            }
+        }
+    </script>
+</body>
+</html> 

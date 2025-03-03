@@ -21,6 +21,44 @@
             align-items: center;
             color: white;
             padding: 2rem;
+            position: relative;
+            overflow: visible;
+            padding-bottom: 2rem;
+        }
+
+        /* Animation d'arrière-plan */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #fff;
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(calc(random() * 100vw), 100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translate(calc(random() * 100vw + 50px), -100px) scale(1);
+                opacity: 0;
+            }
         }
 
         .menu-container {
@@ -31,6 +69,29 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             width: 100%;
             max-width: 1200px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .menu-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff6b6b, #4ecdc4, transparent);
+            animation: borderFlow 4s linear infinite;
+        }
+
+        @keyframes borderFlow {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
         }
 
         h1 {
@@ -42,12 +103,26 @@
             background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: titleGlow 2s ease-in-out infinite;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            border-radius: 3px;
         }
 
         .games-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
+            width: 100%;
         }
 
         .game-card {
@@ -55,7 +130,7 @@
             border-radius: 15px;
             padding: 1.5rem;
             text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
             overflow: hidden;
@@ -63,11 +138,13 @@
             flex-direction: column;
             align-items: center;
             min-height: 320px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .game-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .game-card::before {
@@ -98,16 +175,18 @@
             background-clip: text;
             -webkit-text-fill-color: transparent;
             transition: transform 0.3s ease;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
         }
 
         .game-card:hover .game-icon {
-            transform: scale(1.1);
+            transform: scale(1.1) rotate(5deg);
         }
 
         .game-title {
             font-size: 1.5rem;
             margin-bottom: 1rem;
             color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .game-description {
@@ -115,6 +194,7 @@
             color: #ccc;
             margin-bottom: 1.5rem;
             flex-grow: 1;
+            line-height: 1.5;
         }
 
         .play-button {
@@ -125,14 +205,33 @@
             color: white;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s ease;
+            transition: all 0.3s ease;
             text-decoration: none;
             display: inline-block;
             margin-top: auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .play-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            transform: scale(0);
+            transition: transform 0.5s ease;
+        }
+
+        .play-button:hover::before {
+            transform: scale(1);
         }
 
         .play-button:hover {
             transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         @keyframes titleGlow {
@@ -165,12 +264,100 @@
                 min-height: 280px;
             }
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-content {
+            position: relative;
+            margin: 50px auto;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 300px;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transform: none;
+        }
+
+        .modal-content h2 {
+            color: white;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .modal-buttons {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-button {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .modal-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 90%;
+                margin: 0 auto;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="background-animation" id="particles"></div>
     <div class="menu-container">
         <h1>Mini Jeux</h1>
         <div class="games-grid">
+            <div class="game-card">
+                <i class="fas fa-chess-rook game-icon"></i>
+                <h2 class="game-title">Kingdom Rush</h2>
+                <p class="game-description">Un jeu de tower defense stratégique où vous devez défendre votre royaume contre des vagues d'ennemis avec des tours, des héros et des sorts puissants.</p>
+                <a href="kingdom-rush.html" class="play-button">Jouer</a>
+            </div>
             <div class="game-card">
                 <i class="fas fa-shield-alt game-icon"></i>
                 <h2 class="game-title">Age of War</h2>
@@ -195,7 +382,120 @@
                 <p class="game-description">Un jeu délirant de courses d'obstacles où vous devez survivre à des niveaux complètement fous avec différents véhicules.</p>
                 <a href="happy-wheels.html" class="play-button">Jouer</a>
             </div>
+            <div class="game-card">
+                <i class="fas fa-khanda game-icon"></i>
+                <h2 class="game-title">Miragine War</h2>
+                <p class="game-description">Un jeu de stratégie captivant où vous devez diriger vos troupes pour détruire la base ennemie. Choisissez judicieusement vos unités et menez-les à la victoire !</p>
+                <a href="miragine-war.html" class="play-button">Jouer</a>
+            </div>
+            <div class="game-card">
+                <i class="fas fa-ship game-icon"></i>
+                <h2 class="game-title">Raft Wars</h2>
+                <p class="game-description">Un jeu d'action et de stratégie où vous devez défendre votre radeau en utilisant des armes et de la physique pour vaincre vos ennemis.</p>
+                <button onclick="openRaftWarsModal()" class="play-button">Jouer</button>
+            </div>
+            <div class="game-card">
+                <i class="fas fa-bug game-icon"></i>
+                <h2 class="game-title">Snail Bob</h2>
+                <p class="game-description">Aidez Bob l'escargot à traverser des niveaux remplis de pièges et de puzzles. Utilisez votre intelligence pour résoudre les énigmes et guider Bob en toute sécurité !</p>
+                <button onclick="openSnailBobModal()" class="play-button">Jouer</button>
+            </div>
+            <div class="game-card">
+                <i class="fas fa-chess-rook game-icon"></i>
+                <h2 class="game-title">Battle Panic</h2>
+                <p class="game-description">Un jeu de défense de tour captivant où vous devez protéger votre château contre des vagues d'ennemis en utilisant différentes armes et stratégies.</p>
+                <a href="battle-panic.html" class="play-button">Jouer</a>
+            </div>
         </div>
     </div>
+
+    <div id="raftWarsModal" class="modal">
+        <div class="modal-content">
+            <h2>Choisissez votre version</h2>
+            <div class="modal-buttons">
+                <a href="raft-wars.html" class="modal-button">Raft Wars 1</a>
+                <a href="raft-wars-2.html" class="modal-button">Raft Wars 2</a>
+            </div>
+            <button class="modal-close" onclick="closeRaftWarsModal()">×</button>
+        </div>
+    </div>
+
+    <div id="snailBobModal" class="modal">
+        <div class="modal-content">
+            <h2>Choisissez votre version</h2>
+            <div class="modal-buttons">
+                <a href="snail-bob.html" class="modal-button">Snail Bob 1</a>
+                <a href="snail-bob-2.html" class="modal-button">Snail Bob 2</a>
+                <a href="snail-bob-3.html" class="modal-button">Snail Bob 3</a>
+                <a href="snail-bob-4.html" class="modal-button">Snail Bob 4</a>
+            </div>
+            <button class="modal-close" onclick="closeSnailBobModal()">×</button>
+        </div>
+    </div>
+
+    <script>
+        // Création des particules d'arrière-plan avec positions aléatoires
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 50;
+
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            // Position initiale aléatoire
+            const startX = Math.random() * window.innerWidth;
+            const startY = Math.random() * window.innerHeight;
+            
+            // Position finale aléatoire
+            const endX = Math.random() * window.innerWidth;
+            
+            particle.style.left = `${startX}px`;
+            particle.style.top = `${startY}px`;
+            particle.style.transform = `translate(${endX - startX}px, -${window.innerHeight + 100}px)`;
+            particle.style.animationDelay = `${Math.random() * 15}s`;
+            particle.style.opacity = Math.random() * 0.5 + 0.2;
+            
+            particlesContainer.appendChild(particle);
+            
+            // Supprimer la particule après l'animation
+            particle.addEventListener('animationend', () => {
+                particle.remove();
+                createParticle();
+            });
+        }
+
+        // Création initiale des particules
+        for (let i = 0; i < particleCount; i++) {
+            createParticle();
+        }
+
+        function openRaftWarsModal() {
+            document.getElementById('raftWarsModal').style.display = 'block';
+        }
+
+        function closeRaftWarsModal() {
+            document.getElementById('raftWarsModal').style.display = 'none';
+        }
+
+        function openSnailBobModal() {
+            document.getElementById('snailBobModal').style.display = 'block';
+        }
+
+        function closeSnailBobModal() {
+            document.getElementById('snailBobModal').style.display = 'none';
+        }
+
+        // Mise à jour de la fonction de clic fenêtre pour gérer les deux modals
+        window.onclick = function(event) {
+            const raftModal = document.getElementById('raftWarsModal');
+            const snailModal = document.getElementById('snailBobModal');
+            if (event.target == raftModal) {
+                closeRaftWarsModal();
+            }
+            if (event.target == snailModal) {
+                closeSnailBobModal();
+            }
+        }
+    </script>
 </body>
 </html>
