@@ -25,8 +25,11 @@
         .game-container {
             width: 100%;
             max-width: 1200px;
-            margin: 2rem auto;
+            margin: 1rem auto;
             padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
         }
 
         .game-header {
@@ -34,9 +37,17 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
-        .back-button {
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-button, .fullscreen-button {
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
             border: none;
             padding: 0.8rem 1.5rem;
@@ -46,20 +57,23 @@
             cursor: pointer;
             transition: transform 0.2s ease;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .back-button:hover {
+        .back-button:hover, .fullscreen-button:hover {
             transform: scale(1.05);
         }
 
         .game-frame {
             width: 100%;
-            height: 600px;
+            flex: 1;
             border: none;
             border-radius: 15px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             background: rgba(255, 255, 255, 0.1);
+            min-height: 400px;
         }
 
         .game-title {
@@ -74,13 +88,70 @@
             margin-top: 1rem;
             text-align: center;
             color: #ccc;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .control-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .control-section h3 {
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        .control-list {
+            list-style: none;
+            text-align: left;
+        }
+
+        .control-list li {
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 0.5rem;
+            }
+
+            .game-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header-left {
+                flex-direction: column;
+            }
+
+            .game-title {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+
+            .back-button, .fullscreen-button {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
         <div class="game-header">
-            <a href="menu.html" class="back-button">Retour au Menu</a>
+            <div class="header-left">
+                <a href="index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour au Menu
+                </a>
+                <button class="fullscreen-button" onclick="toggleFullscreen()">
+                    <i class="fas fa-expand"></i>
+                    Plein écran
+                </button>
+            </div>
             <h1 class="game-title">Age of War</h1>
         </div>
         <embed 
@@ -90,9 +161,37 @@
             pluginspage="https://get.adobe.com/flashplayer/"
         >
         <div class="game-controls">
-            <p>Utilisez les flèches du clavier pour vous déplacer et attaquer</p>
-            <p>Appuyez sur ESPACE pour sauter</p>
+            <div class="control-section">
+                <h3><i class="fas fa-desktop"></i> Contrôles PC</h3>
+                <ul class="control-list">
+                    <li><i class="fas fa-arrow-left"></i> Flèche gauche : Se déplacer à gauche</li>
+                    <li><i class="fas fa-arrow-right"></i> Flèche droite : Se déplacer à droite</li>
+                    <li><i class="fas fa-arrow-up"></i> Flèche haut : Sauter</li>
+                    <li><i class="fas fa-arrow-down"></i> Flèche bas : Se baisser</li>
+                    <li><i class="fas fa-space-shuttle"></i> Espace : Attaquer</li>
+                </ul>
+            </div>
+            <div class="control-section">
+                <h3><i class="fas fa-mobile-alt"></i> Mode Tactile</h3>
+                <ul class="control-list">
+                    <li><i class="fas fa-info-circle"></i> Ce jeu est optimisé pour le tactile</li>
+                    <li><i class="fas fa-hand-pointer"></i> Utilisez les boutons à l'écran</li>
+                    <li><i class="fas fa-arrows-alt"></i> Contrôles adaptés automatiquement</li>
+                    <li><i class="fas fa-gamepad"></i> Interface tactile intuitive</li>
+                    <li><i class="fas fa-mobile"></i> Rotation de l'écran supportée</li>
+                </ul>
+            </div>
         </div>
     </div>
+
+    <script>
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+    </script>
 </body>
 </html> 

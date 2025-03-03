@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mini Jeux - Menu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -19,6 +20,7 @@
             justify-content: center;
             align-items: center;
             color: white;
+            padding: 2rem;
         }
 
         .menu-container {
@@ -27,8 +29,8 @@
             border-radius: 20px;
             padding: 2rem;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            width: 90%;
-            max-width: 800px;
+            width: 100%;
+            max-width: 1200px;
         }
 
         h1 {
@@ -44,7 +46,7 @@
 
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
         }
 
@@ -57,6 +59,10 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 320px;
         }
 
         .game-card:hover {
@@ -84,24 +90,31 @@
             left: 100%;
         }
 
-        .game-image {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 10px;
+        .game-icon {
+            font-size: 4rem;
             margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: transform 0.3s ease;
+        }
+
+        .game-card:hover .game-icon {
+            transform: scale(1.1);
         }
 
         .game-title {
             font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
             color: #fff;
         }
 
         .game-description {
             font-size: 0.9rem;
             color: #ccc;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
         }
 
         .play-button {
@@ -113,6 +126,9 @@
             font-weight: bold;
             cursor: pointer;
             transition: transform 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: auto;
         }
 
         .play-button:hover {
@@ -127,6 +143,28 @@
                 text-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
             }
         }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .menu-container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .game-card {
+                min-height: 280px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -134,12 +172,29 @@
         <h1>Mini Jeux</h1>
         <div class="games-grid">
             <div class="game-card">
-                <img src="https://i.imgur.com/8XZqXZq.jpg" alt="Age of War" class="game-image">
+                <i class="fas fa-shield-alt game-icon"></i>
                 <h2 class="game-title">Age of War</h2>
                 <p class="game-description">Un jeu de stratégie épique où vous devez faire évoluer votre civilisation et vaincre vos ennemis à travers différentes époques.</p>
-                <button class="play-button" onclick="window.location.href='age-of-war.html'">Jouer</button>
+                <a href="age-of-war.html" class="play-button">Jouer</a>
             </div>
-            <!-- Plus de jeux seront ajoutés ici -->
+            <div class="game-card">
+                <i class="fas fa-fist-raised game-icon"></i>
+                <h2 class="game-title">Stick War</h2>
+                <p class="game-description">Un jeu de combat stratégique où vous commandez une armée de bâtons dans une guerre épique pour la domination.</p>
+                <a href="stick-war.html" class="play-button">Jouer</a>
+            </div>
+            <div class="game-card">
+                <i class="fas fa-khanda game-icon"></i>
+                <h2 class="game-title">Swords and Sandals 2</h2>
+                <p class="game-description">Un jeu de combat au tour par tour où vous incarnez un gladiateur cherchant la gloire dans l'arène.</p>
+                <a href="swords-and-sandals.html" class="play-button">Jouer</a>
+            </div>
+            <div class="game-card">
+                <i class="fas fa-bicycle game-icon"></i>
+                <h2 class="game-title">Happy Wheels</h2>
+                <p class="game-description">Un jeu délirant de courses d'obstacles où vous devez survivre à des niveaux complètement fous avec différents véhicules.</p>
+                <a href="happy-wheels.html" class="play-button">Jouer</a>
+            </div>
         </div>
     </div>
 </body>
