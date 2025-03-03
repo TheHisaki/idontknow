@@ -18,12 +18,12 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             color: white;
             padding: 2rem;
             position: relative;
-            overflow: visible;
-            padding-bottom: 2rem;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         /* Animation d'arrière-plan */
@@ -70,8 +70,7 @@
             width: 100%;
             max-width: 1200px;
             position: relative;
-            overflow: hidden;
-            margin-bottom: 2rem;
+            margin: 1rem auto;
         }
 
         .menu-container::before {
@@ -246,10 +245,13 @@
         @media (max-width: 768px) {
             body {
                 padding: 1rem;
+                min-height: 100vh;
+                background-attachment: fixed;
             }
 
             .menu-container {
                 padding: 1rem;
+                margin: 0.5rem auto;
             }
 
             h1 {
@@ -258,10 +260,26 @@
 
             .games-grid {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
 
             .game-card {
                 min-height: 280px;
+            }
+
+            .background-animation {
+                position: fixed;
+                height: 100vh;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
             }
         }
 
@@ -344,6 +362,12 @@
                 width: 90%;
                 margin: 0 auto;
             }
+        }
+
+        /* Forcer le fond sur tous les appareils */
+        html {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            min-height: 100vh;
         }
     </style>
 </head>
@@ -432,70 +456,5 @@
             <button class="modal-close" onclick="closeSnailBobModal()">×</button>
         </div>
     </div>
-
-    <script>
-        // Création des particules d'arrière-plan avec positions aléatoires
-        const particlesContainer = document.getElementById('particles');
-        const particleCount = 50;
-
-        function createParticle() {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            
-            // Position initiale aléatoire
-            const startX = Math.random() * window.innerWidth;
-            const startY = Math.random() * window.innerHeight;
-            
-            // Position finale aléatoire
-            const endX = Math.random() * window.innerWidth;
-            
-            particle.style.left = `${startX}px`;
-            particle.style.top = `${startY}px`;
-            particle.style.transform = `translate(${endX - startX}px, -${window.innerHeight + 100}px)`;
-            particle.style.animationDelay = `${Math.random() * 15}s`;
-            particle.style.opacity = Math.random() * 0.5 + 0.2;
-            
-            particlesContainer.appendChild(particle);
-            
-            // Supprimer la particule après l'animation
-            particle.addEventListener('animationend', () => {
-                particle.remove();
-                createParticle();
-            });
-        }
-
-        // Création initiale des particules
-        for (let i = 0; i < particleCount; i++) {
-            createParticle();
-        }
-
-        function openRaftWarsModal() {
-            document.getElementById('raftWarsModal').style.display = 'block';
-        }
-
-        function closeRaftWarsModal() {
-            document.getElementById('raftWarsModal').style.display = 'none';
-        }
-
-        function openSnailBobModal() {
-            document.getElementById('snailBobModal').style.display = 'block';
-        }
-
-        function closeSnailBobModal() {
-            document.getElementById('snailBobModal').style.display = 'none';
-        }
-
-        // Mise à jour de la fonction de clic fenêtre pour gérer les deux modals
-        window.onclick = function(event) {
-            const raftModal = document.getElementById('raftWarsModal');
-            const snailModal = document.getElementById('snailBobModal');
-            if (event.target == raftModal) {
-                closeRaftWarsModal();
-            }
-            if (event.target == snailModal) {
-                closeSnailBobModal();
-            }
-        }
-    </script>
 </body>
 </html>
