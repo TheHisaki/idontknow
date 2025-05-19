@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hobo - Mini Jeux</title>
+    <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Arial", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .background-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        opacity: 0.3;
+        overflow: hidden;
+      }
+
+      .particle {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        background: #fff;
+        border-radius: 50%;
+        animation: float 15s infinite linear;
+        opacity: 0;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(100vh);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.8;
+        }
+        90% {
+          opacity: 0.8;
+        }
+        100% {
+          transform: translateY(-100px);
+          opacity: 0;
+        }
+      }
+
+      .game-container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        min-height: calc(100vh - 4rem);
+        position: relative;
+      }
+
+      .game-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 1.5rem;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        transition: box-shadow 0.3s ease;
+      }
+
+      .game-header:hover {
+        box-shadow: 0 8px 32px rgba(0, 198, 255, 0.2);
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .back-button,
+      .fullscreen-button {
+        background: linear-gradient(45deg, #00c6ff, #0072ff);
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .back-button::before,
+      .fullscreen-button::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.3) 0%,
+          transparent 70%
+        );
+        transform: scale(0);
+        transition: transform 0.5s ease;
+      }
+
+      .back-button:hover::before,
+      .fullscreen-button:hover::before {
+        transform: scale(1);
+      }
+
+      .back-button:hover,
+      .fullscreen-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      .game-frame-container {
+        position: relative;
+        width: 100%;
+        flex: 1;
+        min-height: 400px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        transition: box-shadow 0.3s ease;
+      }
+
+      .game-frame-container:hover {
+        box-shadow: 0 8px 32px rgba(0, 114, 255, 0.2);
+      }
+
+      .game-frame {
+        width: 100%;
+        height: 100%;
+        border: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      .game-frame.fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 1000;
+      }
+
+      .game-title {
+        font-size: 2.5rem;
+        background: linear-gradient(45deg, #00c6ff, #0072ff);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        position: relative;
+        animation: gradientFlow 3s linear infinite;
+      }
+
+      @keyframes gradientFlow {
+        0% {
+          background-position: 0% 50%;
+        }
+        100% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .game-title::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, #00c6ff, #0072ff);
+        background-size: 200% auto;
+        border-radius: 3px;
+        animation: gradientFlow 3s linear infinite;
+      }
+
+      .footer-space {
+        height: 2rem;
+        width: 100%;
+      }
+
+      @media (max-width: 768px) {
+        .game-container {
+          padding: 0.5rem;
+          margin: 1rem auto;
+        }
+
+        .game-header {
+          flex-direction: column;
+          align-items: stretch;
+          margin-bottom: 1rem;
+        }
+
+        .header-left {
+          flex-direction: column;
+        }
+
+        .game-title {
+          font-size: 1.8rem;
+          text-align: center;
+        }
+
+        .back-button,
+        .fullscreen-button {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="background-animation" id="particles"></div>
+    <div class="game-container">
+      <div class="game-header">
+        <div class="header-left">
+          <a href="index.html" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            Retour au Menu
+          </a>
+          <button class="fullscreen-button" onclick="toggleFullscreen()">
+            <i class="fas fa-expand"></i>
+            Plein écran
+          </button>
+        </div>
+        <h1 class="game-title">Earn to Die 2012: Part 2</h1>
+      </div>
+      <div class="game-frame-container">
+        <embed
+          id="gameFrame"
+          class="game-frame"
+          src="games/earntodie2012-2.swf"
+          type="application/x-shockwave-flash"
+          pluginspage="https://get.adobe.com/flashplayer/"
+        />
+      </div>
+      <div class="footer-space"></div>
+    </div>
+    <script>
+      function toggleFullscreen() {
+        const gameFrame = document.getElementById("gameFrame");
+        if (!document.fullscreenElement) {
+          if (gameFrame.requestFullscreen) {
+            gameFrame.requestFullscreen();
+          } else if (gameFrame.mozRequestFullScreen) {
+            gameFrame.mozRequestFullScreen();
+          } else if (gameFrame.webkitRequestFullscreen) {
+            gameFrame.webkitRequestFullscreen();
+          } else if (gameFrame.msRequestFullscreen) {
+            gameFrame.msRequestFullscreen();
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+        }
+      }
+
+      // Création des particules d'arrière-plan
+      function createParticles() {
+        const container = document.getElementById("particles");
+        const particleCount = 30;
+
+        for (let i = 0; i < particleCount; i++) {
+          const particle = document.createElement("div");
+          particle.className = "particle";
+          particle.style.left = Math.random() * 100 + "vw";
+          particle.style.animationDelay = Math.random() * 15 + "s";
+          particle.style.animationDuration = 10 + Math.random() * 10 + "s";
+          container.appendChild(particle);
+        }
+      }
+
+      // Initialisation des particules
+      createParticles();
+    </script>
+  </body>
+</html>
